@@ -1,5 +1,6 @@
-package com.example.pcgamer.pruebausuarios;
+package com.example.pcgamer.pruebausuarios.Clases;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
@@ -7,9 +8,17 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
+import com.example.pcgamer.pruebausuarios.R;
 
 import org.json.JSONObject;
 
@@ -17,12 +26,12 @@ import org.json.JSONObject;
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link ListaUsuariosFragment.OnFragmentInteractionListener} interface
+ * {@link RegistroFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link ListaUsuariosFragment#newInstance} factory method to
+ * Use the {@link RegistroFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class ListaUsuariosFragment extends Fragment implements Response.Listener<JSONObject>, Response.ErrorListener{
+public class RegistroFragment extends Fragment implements Response.Listener<JSONObject>, Response.ErrorListener{
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -34,7 +43,15 @@ public class ListaUsuariosFragment extends Fragment implements Response.Listener
 
     private OnFragmentInteractionListener mListener;
 
-    public ListaUsuariosFragment() {
+    EditText CampoNombre, CampoDireccion, CampoImagen;
+    Button btnRegistro;
+    ProgressDialog progreso;
+
+    RequestQueue request;
+    JsonObjectRequest jsonObjectRequest;
+
+
+    public RegistroFragment() {
         // Required empty public constructor
     }
 
@@ -44,11 +61,11 @@ public class ListaUsuariosFragment extends Fragment implements Response.Listener
      *
      * @param param1 Parameter 1.
      * @param param2 Parameter 2.
-     * @return A new instance of fragment ListaUsuariosFragment.
+     * @return A new instance of fragment RegistroFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static ListaUsuariosFragment newInstance(String param1, String param2) {
-        ListaUsuariosFragment fragment = new ListaUsuariosFragment();
+    public static RegistroFragment newInstance(String param1, String param2) {
+        RegistroFragment fragment = new RegistroFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -65,23 +82,74 @@ public class ListaUsuariosFragment extends Fragment implements Response.Listener
         }
     }
 
+
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_lista_usuarios, container, false);
+
+        View vista=inflater.inflate(R.layout.fragment_registro, container, false);
+        CampoNombre = (EditText) vista.findViewById(R.id.CampoNombre);
+        CampoDireccion = (EditText) vista.findViewById(R.id.CampoDireccion);
+        //CampoImagen = (EditText) vista.findViewById(R.id.CampoImagen);
+
+        btnRegistro = (Button) vista.findViewById(R.id.btnRegistrar);
+
+        String url;
+
+        request = Volley.newRequestQueue(getContext());
+
+        btnRegistro.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                cargarWebService();
+            }
+        });
+
+
+        //inflater.inflate(R.layout.fragment_registro, container, false
+        return vista;
     }
 
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
+    private void cargarWebService() {
+        progreso = new ProgressDialog(getContext());
+        progreso.setMessage("Cargando...");
+        progreso.show();
+
+        String url="http://cms.tecnidepot.com/insert?nombre="+CampoNombre.getText().toString()+"&direccion="
+                +CampoDireccion.getText().toString()+"&imagen="+CampoImagen.getText().toString();
+
+        url=url.replace(" ","%20");
+
+        jsonObjectRequest = new JsonObjectRequest(Request.Method.GET,url,null,this,this);
+        request.add(jsonObjectRequest);
+
     }
+
+
+    @Override
+    public void onResponse(JSONObject response) {
+
+
+        Toast.makeText(getContext(),"Se ha registrado exitosamente", Toast.LENGTH_SHORT).show();
+        progreso.hide();
+
+        CampoNombre.setText("");
+        CampoDireccion.setText("");
+        CampoImagen.setText("");
+    }
+
 
     @Override
     public void onErrorResponse(VolleyError error) {
 
+
+        Toast.makeText(getContext(),"No se pudo registrar " +  error.toString(), Toast.LENGTH_SHORT).show();
+        progreso.hide();
+        //Log.i("ERROR", error.toString());
     }
+
+
 
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
@@ -101,12 +169,13 @@ public class ListaUsuariosFragment extends Fragment implements Response.Listener
         }
     }
 
-
-
     @Override
-    public void onResponse(JSONObject response) {
-
+    public void onDetach() {
+        super.onDetach();
+        mListener = null;
     }
+
+
 
     /**
      * This interface must be implemented by activities that contain this

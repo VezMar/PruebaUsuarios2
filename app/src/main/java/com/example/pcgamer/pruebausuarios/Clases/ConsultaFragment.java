@@ -1,4 +1,4 @@
-package com.example.pcgamer.pruebausuarios;
+package com.example.pcgamer.pruebausuarios.Clases;
 
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -20,9 +20,9 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.pcgamer.pruebausuarios.Entidades.Usuario;
+import com.example.pcgamer.pruebausuarios.R;
 
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 

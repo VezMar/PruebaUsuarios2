@@ -1,16 +1,16 @@
-package com.example.pcgamer.pruebausuarios;
+package com.example.pcgamer.pruebausuarios.Clases;
 
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -19,19 +19,26 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.pcgamer.pruebausuarios.Entidades.Usuario;
+import com.example.pcgamer.pruebausuarios.R;
+import com.example.pcgamer.pruebausuarios.adapter.UsuariosAdapter;
 
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.ArrayList;
 
 
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link RegistroFragment.OnFragmentInteractionListener} interface
+ * {@link ListaUsuariosFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link RegistroFragment#newInstance} factory method to
+ * Use the {@link ListaUsuariosFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class RegistroFragment extends Fragment implements Response.Listener<JSONObject>, Response.ErrorListener{
+public class ListaUsuariosFragment extends Fragment implements Response.Listener<JSONObject>, Response.ErrorListener{
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -43,15 +50,15 @@ public class RegistroFragment extends Fragment implements Response.Listener<JSON
 
     private OnFragmentInteractionListener mListener;
 
-    EditText CampoNombre, CampoDireccion, CampoImagen;
-    Button btnRegistro;
-    ProgressDialog progreso;
+    RecyclerView recyclerUsuarios;
+    ArrayList<Usuario> listaUsuarios;
+
+    ProgressDialog progress;
 
     RequestQueue request;
     JsonObjectRequest jsonObjectRequest;
 
-
-    public RegistroFragment() {
+    public ListaUsuariosFragment() {
         // Required empty public constructor
     }
 
@@ -61,11 +68,11 @@ public class RegistroFragment extends Fragment implements Response.Listener<JSON
      *
      * @param param1 Parameter 1.
      * @param param2 Parameter 2.
-     * @return A new instance of fragment RegistroFragment.
+     * @return A new instance of fragment ListaUsuariosFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static RegistroFragment newInstance(String param1, String param2) {
-        RegistroFragment fragment = new RegistroFragment();
+    public static ListaUsuariosFragment newInstance(String param1, String param2) {
+        ListaUsuariosFragment fragment = new ListaUsuariosFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -82,74 +89,86 @@ public class RegistroFragment extends Fragment implements Response.Listener<JSON
         }
     }
 
-
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        View vista=inflater.inflate(R.layout.fragment_lista_usuarios, container, false);
 
-        View vista=inflater.inflate(R.layout.fragment_registro, container, false);
-        CampoNombre = (EditText) vista.findViewById(R.id.CampoNombre);
-        CampoDireccion = (EditText) vista.findViewById(R.id.CampoDireccion);
-        CampoImagen = (EditText) vista.findViewById(R.id.CampoImagen);
+        listaUsuarios = new ArrayList<>();
 
-        btnRegistro = (Button) vista.findViewById(R.id.btnRegistrar);
-
-        String url;
+        recyclerUsuarios = (RecyclerView) vista.findViewById(R.id.idRecycler);
+        recyclerUsuarios.setLayoutManager(new LinearLayoutManager(this.getContext()));
+        recyclerUsuarios.setHasFixedSize(true);
 
         request = Volley.newRequestQueue(getContext());
 
-        btnRegistro.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                cargarWebService();
-            }
-        });
+        cargarWebService();
 
-
-        //inflater.inflate(R.layout.fragment_registro, container, false
         return vista;
     }
 
     private void cargarWebService() {
-        progreso = new ProgressDialog(getContext());
-        progreso.setMessage("Cargando...");
-        progreso.show();
 
-        String url="http://cms.tecnidepot.com/insert?nombre="+CampoNombre.getText().toString()+"&direccion="
-                +CampoDireccion.getText().toString()+"&imagen="+CampoImagen.getText().toString();
+        progress = new ProgressDialog(getContext());
+        progress.setMessage("Consultando...");
+        progress.show();
 
-        url=url.replace(" ","%20");
+        String url = "http://cms.tecnidepot.com/todos?";
 
-        jsonObjectRequest = new JsonObjectRequest(Request.Method.GET,url,null,this,this);
+        jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null, this, this);
         request.add(jsonObjectRequest);
 
     }
 
 
     @Override
-    public void onResponse(JSONObject response) {
+    public void onErrorResponse(VolleyError error) {
 
+        Toast.makeText(getContext(),"No se pudo Consultar " +  error.toString(), Toast.LENGTH_SHORT).show();
+        System.out.println();
+        Log.i("ERROR", error.toString());
+        progress.hide();
 
-        Toast.makeText(getContext(),"Se ha registrado exitosamente", Toast.LENGTH_SHORT).show();
-        progreso.hide();
-
-        CampoNombre.setText("");
-        CampoDireccion.setText("");
-        CampoImagen.setText("");
     }
 
 
     @Override
-    public void onErrorResponse(VolleyError error) {
+    public void onResponse(JSONObject response) {
+        Usuario usuario = null;
 
+        JSONArray json= response.optJSONArray("user");
 
-        Toast.makeText(getContext(),"No se pudo registrar " +  error.toString(), Toast.LENGTH_SHORT).show();
-        progreso.hide();
-        //Log.i("ERROR", error.toString());
+        try {
+            for (int i=0; i<json.length(); i++){
+                usuario = new Usuario();
+                JSONObject jsonObject = null;
+                jsonObject= json.getJSONObject(i);
+
+                usuario.setIDUsuario(jsonObject.optInt("id"));
+                usuario.setDireccion(jsonObject.optString("direccion"));
+                usuario.setImagen(jsonObject.optString("image"));
+                usuario.setFechaCreate(jsonObject.optString("create_at"));
+                usuario.setFechaUpdate(jsonObject.optString("update_at"));
+
+                listaUsuarios.add(usuario);
+            }
+            progress.hide();
+            UsuariosAdapter adapter = new UsuariosAdapter(listaUsuarios);
+            recyclerUsuarios.setAdapter(adapter);
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+            Toast.makeText(getContext(),"No se ha podido establecer conexion con el servidor " + " " + response
+                    , Toast.LENGTH_SHORT).show();
+            progress.hide();
+        }
     }
 
-
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mListener = null;
+    }
 
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
@@ -167,12 +186,6 @@ public class RegistroFragment extends Fragment implements Response.Listener<JSON
             throw new RuntimeException(context.toString()
                     + " must implement OnFragmentInteractionListener");
         }
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
     }
 
 
