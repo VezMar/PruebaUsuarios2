@@ -22,7 +22,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="68dp"
             android:layout_marginTop="5dp"
-            android:text="REGISTRAR USUARIOS"
+            android:text="@string/registrar_usuarios"
             android:textColor="@android:color/black"
             android:textSize="24sp"
             android:textStyle="bold"
@@ -42,18 +42,20 @@
                 android:layout_marginStart="5dp"
                 android:layout_marginTop="23dp"
                 android:ems="10"
-                android:hint="Nombre"
+                android:hint="@string/nombre"
                 android:inputType="textPersonName"
                 tools:layout_editor_absoluteX="25dp"
-                tools:layout_editor_absoluteY="78dp" />
+                tools:layout_editor_absoluteY="78dp"
+                android:autofillHints="" />
 
             <Button
-                android:id="@+id/button"
-                android:layout_marginTop="15dp"
-                android:layout_width="136dp"
+                android:id="@+id/btnFoto"
+                android:layout_width="wrap_content"
                 android:layout_height="36dp"
-                android:layout_marginEnd="24dp"
-                android:text="Foto" />
+                android:layout_gravity="center"
+                android:backgroundTint="@color/colorAccent"
+                android:text="@string/foto"
+                android:textColor="@android:color/background_light" />
 
 
         </LinearLayout>
@@ -70,20 +72,22 @@
                 android:layout_marginStart="5dp"
                 android:layout_marginTop="19dp"
                 android:ems="10"
-                android:hint="Direccion"
+                android:hint="@string/direccion"
                 android:inputType="textPersonName"
                 tools:layout_editor_absoluteX="25dp"
-                tools:layout_editor_absoluteY="78dp" />
+                tools:layout_editor_absoluteY="78dp"
+                android:autofillHints="" />
         </LinearLayout>
 
 
         <ImageView
-            android:id="@+id/imageView2"
+            android:id="@+id/imgFoto"
             android:layout_width="200dp"
             android:layout_height="200dp"
-           android:layout_marginTop="10dp"
             android:layout_marginStart="88dp"
+            android:layout_marginTop="10dp"
             android:layout_marginBottom="60dp"
+            android:contentDescription="@string/todo"
             android:src="@mipmap/ic_imagen_base" />
 
 
@@ -92,7 +96,7 @@
             android:layout_width="match_parent"
             android:layout_height="30dp"
             android:background="@color/colorAccent"
-            android:text="Registrar"
+            android:text="@string/registrar"
             android:textAppearance="@style/TextAppearance.AppCompat.Title"
             tools:targetApi="m" />
 
