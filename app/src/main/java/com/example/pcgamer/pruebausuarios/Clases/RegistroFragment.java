@@ -14,6 +14,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
+import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,17 +24,24 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.pcgamer.pruebausuarios.R;
 
 import org.json.JSONObject;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 
 /**
@@ -44,7 +52,7 @@ import java.io.File;
  * Use the {@link RegistroFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class RegistroFragment extends Fragment implements Response.Listener<JSONObject>, Response.ErrorListener{
+public class RegistroFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -77,6 +85,8 @@ public class RegistroFragment extends Fragment implements Response.Listener<JSON
 
     RequestQueue request;
     JsonObjectRequest jsonObjectRequest;
+
+    StringRequest stringRequest;
 
 
     public RegistroFragment() {
@@ -213,6 +223,14 @@ public class RegistroFragment extends Fragment implements Response.Listener<JSON
             case COD_SELECCIONA:
                 Uri miPath=data.getData();
                 imgFoto.setImageURI(miPath);
+                try {
+                    bitmap=MediaStore.Images.Media.getBitmap(getContext().getContentResolver(),miPath);
+                    imgFoto.setImageBitmap(bitmap);
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
                 break;
 
             case COD_FOTO:
@@ -238,38 +256,61 @@ public class RegistroFragment extends Fragment implements Response.Listener<JSON
         progreso.setMessage("Cargando...");
         progreso.show();
 
-        String url="http://cms.tecnidepot.com/insert?nombre="+CampoNombre.getText().toString()+"&direccion="
-                +CampoDireccion.getText().toString()+"&imagen="+CampoImagen.getText().toString();
+        String url="https://e66af388.ngrok.io/image?";
 
-        url=url.replace(" ","%20");
+        stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                progreso.hide();
+                if (response.trim().equalsIgnoreCase("registra")){
+                    CampoNombre.setText("");
+                    CampoDireccion.setText("");
+                    imgFoto.setImageBitmap(null);
 
-        jsonObjectRequest = new JsonObjectRequest(Request.Method.GET,url,null,this,this);
-        request.add(jsonObjectRequest);
+                    Toast.makeText(getContext(), "Se ha registrado exitosamente",Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(getContext(), "No se pudo registrar",Toast.LENGTH_SHORT).show();
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast.makeText(getContext(), "No se ha podido conectar",Toast.LENGTH_SHORT).show();
+                progreso.hide();
+            }
+        }){
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+
+                String nombre = CampoNombre.getText().toString();
+                String direccion = CampoDireccion.getText().toString();
+
+                String imagen= convertirImgString(bitmap);
+
+                Map<String,String> parametros = new HashMap<>();
+                parametros.put("nombre", nombre);
+                parametros.put("direccion", direccion);
+                parametros.put("imagen", imagen);
+
+                return parametros;
+            }
+        };
+
+        request.add(stringRequest);
+    }
+
+    private String convertirImgString(Bitmap bitmap) {
+
+        ByteArrayOutputStream array = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, array);
+        byte [] imagenByte = array.toByteArray();
+        String imagenString = Base64.encodeToString(imagenByte, Base64.DEFAULT);
+
+
+        return imagenString;
 
     }
 
-
-    @Override
-    public void onResponse(JSONObject response) {
-
-
-        Toast.makeText(getContext(),"Se ha registrado exitosamente", Toast.LENGTH_SHORT).show();
-        progreso.hide();
-
-        CampoNombre.setText("");
-        CampoDireccion.setText("");
-        CampoImagen.setText("");
-    }
-
-
-    @Override
-    public void onErrorResponse(VolleyError error) {
-
-
-        Toast.makeText(getContext(),"No se pudo registrar " +  error.toString(), Toast.LENGTH_SHORT).show();
-        progreso.hide();
-        //Log.i("ERROR", error.toString());
-    }
 
 
 
