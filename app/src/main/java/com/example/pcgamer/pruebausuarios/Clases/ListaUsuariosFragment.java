@@ -1,17 +1,33 @@
-package com.example.pcgamer.pruebausuarios;
+package com.example.pcgamer.pruebausuarios.Clases;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
+import com.example.pcgamer.pruebausuarios.Entidades.Usuario;
+import com.example.pcgamer.pruebausuarios.R;
+import com.example.pcgamer.pruebausuarios.adapter.UsuariosAdapter;
 
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.ArrayList;
 
 
 /**
@@ -33,6 +49,14 @@ public class ListaUsuariosFragment extends Fragment implements Response.Listener
     private String mParam2;
 
     private OnFragmentInteractionListener mListener;
+
+    RecyclerView recyclerUsuarios;
+    ArrayList<Usuario> listaUsuarios;
+
+    ProgressDialog progress;
+
+    RequestQueue request;
+    JsonObjectRequest jsonObjectRequest;
 
     public ListaUsuariosFragment() {
         // Required empty public constructor
@@ -68,19 +92,82 @@ public class ListaUsuariosFragment extends Fragment implements Response.Listener
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_lista_usuarios, container, false);
+        View vista=inflater.inflate(R.layout.fragment_lista_usuarios, container, false);
+
+        listaUsuarios = new ArrayList<>();
+
+        recyclerUsuarios = (RecyclerView) vista.findViewById(R.id.idRecycler);
+        recyclerUsuarios.setLayoutManager(new LinearLayoutManager(this.getContext()));
+        recyclerUsuarios.setHasFixedSize(true);
+
+        request = Volley.newRequestQueue(getContext());
+
+        cargarWebService();
+
+        return vista;
+    }
+
+    private void cargarWebService() {
+
+        progress = new ProgressDialog(getContext());
+        progress.setMessage("Consultando...");
+        progress.show();
+
+        String url = "http://cms.tecnidepot.com/todos?";
+
+        jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null, this, this);
+        request.add(jsonObjectRequest);
+
+    }
+
+
+    @Override
+    public void onErrorResponse(VolleyError error) {
+
+        Toast.makeText(getContext(),"No se pudo Consultar " +  error.toString(), Toast.LENGTH_SHORT).show();
+        System.out.println();
+        Log.i("ERROR", error.toString());
+        progress.hide();
+
+    }
+
+
+    @Override
+    public void onResponse(JSONObject response) {
+        Usuario usuario = null;
+
+        JSONArray json= response.optJSONArray("user");
+
+        try {
+            for (int i=0; i<json.length(); i++){
+                usuario = new Usuario();
+                JSONObject jsonObject = null;
+                jsonObject= json.getJSONObject(i);
+
+                usuario.setIDUsuario(jsonObject.optInt("id"));
+                usuario.setDireccion(jsonObject.optString("direccion"));
+                usuario.setImagen(jsonObject.optString("image"));
+                usuario.setFechaCreate(jsonObject.optString("create_at"));
+                usuario.setFechaUpdate(jsonObject.optString("update_at"));
+
+                listaUsuarios.add(usuario);
+            }
+            progress.hide();
+            UsuariosAdapter adapter = new UsuariosAdapter(listaUsuarios);
+            recyclerUsuarios.setAdapter(adapter);
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+            Toast.makeText(getContext(),"No se ha podido establecer conexion con el servidor " + " " + response
+                    , Toast.LENGTH_SHORT).show();
+            progress.hide();
+        }
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
         mListener = null;
-    }
-
-    @Override
-    public void onErrorResponse(VolleyError error) {
-
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -102,11 +189,6 @@ public class ListaUsuariosFragment extends Fragment implements Response.Listener
     }
 
 
-
-    @Override
-    public void onResponse(JSONObject response) {
-
-    }
 
     /**
      * This interface must be implemented by activities that contain this

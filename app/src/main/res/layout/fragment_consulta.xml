@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
 
-    tools:context=".ConsultaFragment">
+    tools:context=".Clases.ConsultaFragment">
 
     <!-- TODO: Update blank fragment layout -->
 
@@ -60,26 +60,6 @@
         android:layout_alignStart="@+id/txtDireccion"
         android:layout_marginTop="18dp"
         android:layout_centerVertical="true"
-        android:textColor="@android:color/black"
-        android:textSize="18sp" />
-
-    <TextView
-        android:id="@+id/txtFechaCreate"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignStart="@+id/txtImagen"
-        android:layout_below="@+id/txtImagen"
-        android:layout_marginTop="18dp"
-        android:textColor="@android:color/black"
-        android:textSize="18sp" />
-
-    <TextView
-        android:id="@+id/txtFechaUpdate"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignStart="@+id/txtFechaCreate"
-        android:layout_below="@+id/txtFechaCreate"
-        android:layout_marginTop="18dp"
         android:textColor="@android:color/black"
         android:textSize="18sp" />
 

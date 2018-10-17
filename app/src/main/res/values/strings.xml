@@ -9,4 +9,10 @@
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="todo">TODO</string>
+    <string name="registrar">Registrar</string>
+    <string name="direccion">Direccion</string>
+    <string name="foto">Foto</string>
+    <string name="nombre">Nombre</string>
+    <string name="registrar_usuarios">REGISTRAR USUARIOS</string>
 </resources>

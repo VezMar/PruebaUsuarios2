@@ -1,4 +1,4 @@
-package com.example.pcgamer.pruebausuarios;
+package com.example.pcgamer.pruebausuarios.Clases;
 
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -20,9 +20,9 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.pcgamer.pruebausuarios.Entidades.Usuario;
+import com.example.pcgamer.pruebausuarios.R;
 
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 
@@ -95,8 +95,8 @@ public class ConsultaFragment extends Fragment implements Response.Listener<JSON
         txtNombre= (TextView) vista.findViewById(R.id.txtNombre);
         txtDireccion= (TextView) vista.findViewById(R.id.txtDireccion);
         txtImagen= (TextView) vista.findViewById(R.id.txtImagen);
-        txtFechaCreate= (TextView) vista.findViewById(R.id.txtFechaCreate);
-        txtFechaUpdate= (TextView) vista.findViewById(R.id.txtFechaUpdate);
+      /*  txtFechaCreate= (TextView) vista.findViewById(R.id.txtFechaCreate);
+        txtFechaUpdate= (TextView) vista.findViewById(R.id.txtFechaUpdate);*/
 
         btnConsultarUsuario = (Button) vista.findViewById(R.id.btnConsultarUsuario);
 
@@ -148,8 +148,8 @@ public class ConsultaFragment extends Fragment implements Response.Listener<JSON
         miUsuario.setNombre(jsonObject.optString("name"));
         miUsuario.setDireccion(jsonObject.optString("direccion"));
         miUsuario.setImagen(jsonObject.optString("image"));
-        miUsuario.setFechaCreate(jsonObject.optString("created_at"));
-        miUsuario.setFechaUpdate(jsonObject.optString("updated_at"));
+       /* miUsuario.setFechaCreate(jsonObject.optString("created_at"));
+        miUsuario.setFechaUpdate(jsonObject.optString("updated_at"));*/
 
         /*try {
             jsonObject=json.getJSONObject(0);
@@ -165,8 +165,8 @@ public class ConsultaFragment extends Fragment implements Response.Listener<JSON
         txtNombre.setText("Nombre : "+miUsuario.getNombre());
         txtDireccion.setText("Direccion : "+miUsuario.getDireccion());
         txtImagen.setText("Imagen : "+miUsuario.getImagen());
-        txtFechaCreate.setText("Fecha de creacion: "+miUsuario.getFechaCreate());
-        txtFechaUpdate.setText("Ultima Actualizacion: "+miUsuario.getFechaUpdate());
+       /* txtFechaCreate.setText("Fecha de creacion: "+miUsuario.getFechaCreate());
+        txtFechaUpdate.setText("Ultima Actualizacion: "+miUsuario.getFechaUpdate());*/
     }
 
     // TODO: Rename method, update argument and hook method into UI event

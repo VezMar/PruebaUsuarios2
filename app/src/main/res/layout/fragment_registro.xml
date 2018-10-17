@@ -6,77 +6,99 @@
     android:layout_width="match_parent"
 
     android:layout_height="match_parent"
-    tools:context=".RegistroFragment">
+    tools:context=".Clases.RegistroFragment">
 
     <!-- TODO: Update blank fragment layout -->
-
-    <TextView
-        android:id="@+id/textView2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="68dp"
-        android:layout_marginTop="16dp"
-        android:text="REGISTRAR USUARIOS"
-        android:textColor="@android:color/black"
-        android:textSize="24sp"
-        android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <EditText
-        android:id="@+id/CampoNombre"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignStart="@+id/CampoDireccion"
-        android:layout_below="@+id/textView2"
-        android:layout_marginTop="36dp"
-        android:contentDescription="Nombre"
-        android:ems="10"
-        android:inputType="textPersonName"
-        tools:layout_editor_absoluteX="25dp"
-        tools:layout_editor_absoluteY="78dp"
-        android:hint="Nombre"
-        />
-
-    <EditText
-        android:id="@+id/CampoDireccion"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignStart="@+id/CampoImagen"
-        android:layout_below="@+id/CampoNombre"
-        android:layout_marginTop="66dp"
-        android:contentDescription="Imagen"
-        android:ems="10"
-        android:inputType="textPersonName"
-        tools:layout_editor_absoluteX="25dp"
-        tools:layout_editor_absoluteY="140dp"
-        android:hint="Direccion"
-        />
-
-    <EditText
-        android:id="@+id/CampoImagen"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/btnRegistrar"
-        android:layout_alignParentStart="true"
-        android:layout_marginBottom="125dp"
-        android:layout_marginStart="31dp"
-        android:contentDescription="Direccion"
-        android:ems="10"
-        android:inputType="textPersonName"
-        tools:layout_editor_absoluteX="25dp"
-        tools:layout_editor_absoluteY="205dp"
-        android:hint="idImagen"
-        />
-
-    <Button
-        android:id="@+id/btnRegistrar"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
-        android:layout_alignParentStart="true"
-        android:background="@color/colorAccent"
-        android:text="Registrar"
-        android:textAppearance="@style/TextAppearance.AppCompat.Title"
-        tools:targetApi="m" />
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/textView2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="68dp"
+            android:layout_marginTop="5dp"
+            android:text="@string/registrar_usuarios"
+            android:textColor="@android:color/black"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <EditText
+                android:id="@+id/CampoNombre"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:layout_marginTop="23dp"
+                android:ems="10"
+                android:hint="@string/nombre"
+                android:inputType="textPersonName"
+                tools:layout_editor_absoluteX="25dp"
+                tools:layout_editor_absoluteY="78dp"
+                android:autofillHints="" />
+
+            <Button
+                android:id="@+id/btnFoto"
+                android:layout_width="wrap_content"
+                android:layout_height="36dp"
+                android:layout_gravity="center"
+                android:backgroundTint="@color/colorAccent"
+                android:text="@string/foto"
+                android:textColor="@android:color/background_light" />
+
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <EditText
+                android:id="@+id/CampoDireccion"
+                android:layout_width="220dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:layout_marginTop="19dp"
+                android:ems="10"
+                android:hint="@string/direccion"
+                android:inputType="textPersonName"
+                tools:layout_editor_absoluteX="25dp"
+                tools:layout_editor_absoluteY="78dp"
+                android:autofillHints="" />
+        </LinearLayout>
+
+
+        <ImageView
+            android:id="@+id/imgFoto"
+            android:layout_width="200dp"
+            android:layout_height="200dp"
+            android:layout_marginStart="88dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="60dp"
+            android:contentDescription="@string/todo"
+            android:src="@mipmap/ic_imagen_base" />
+
+
+        <Button
+            android:id="@+id/btnRegistrar"
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:background="@color/colorAccent"
+            android:text="@string/registrar"
+            android:textAppearance="@style/TextAppearance.AppCompat.Title"
+            tools:targetApi="m" />
+
+    </LinearLayout>
 </RelativeLayout>
