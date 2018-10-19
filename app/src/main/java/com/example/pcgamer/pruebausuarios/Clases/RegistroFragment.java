@@ -256,7 +256,7 @@ public class RegistroFragment extends Fragment {
         progreso.setMessage("Cargando...");
         progreso.show();
 
-        String url="https://e66af388.ngrok.io/image?";
+        String url="http://cms.tecnidepot.com/insert-user?";
 
         stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
             @Override

@@ -2,6 +2,7 @@ package com.example.pcgamer.pruebausuarios.Clases;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -10,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -19,6 +21,8 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.example.pcgamer.pruebausuarios.Entidades.Usuario;
 import com.example.pcgamer.pruebausuarios.R;
 
@@ -52,7 +56,9 @@ public class ConsultaFragment extends Fragment implements Response.Listener<JSON
     Button btnConsultarUsuario;
     ProgressDialog progreso;
 
+    ImageView imgUsuario;
     RequestQueue request;
+
     JsonObjectRequest jsonObjectRequest;
 
     public ConsultaFragment() {
@@ -98,9 +104,11 @@ public class ConsultaFragment extends Fragment implements Response.Listener<JSON
       /*  txtFechaCreate= (TextView) vista.findViewById(R.id.txtFechaCreate);
         txtFechaUpdate= (TextView) vista.findViewById(R.id.txtFechaUpdate);*/
 
+        imgUsuario = (ImageView) vista.findViewById(R.id.imgUsuario);
+        request = Volley.newRequestQueue(getContext());
+
         btnConsultarUsuario = (Button) vista.findViewById(R.id.btnConsultarUsuario);
 
-        request = Volley.newRequestQueue(getContext());
 
         btnConsultarUsuario.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -124,6 +132,7 @@ public class ConsultaFragment extends Fragment implements Response.Listener<JSON
 
         jsonObjectRequest = new JsonObjectRequest(Request.Method.GET,url,null,this,this);
         request.add(jsonObjectRequest);
+
     }
 
     @Override
@@ -137,8 +146,11 @@ public class ConsultaFragment extends Fragment implements Response.Listener<JSON
     public void onResponse(JSONObject response) {
 
 
-        Toast.makeText(getContext(),"Mensaje: " +response, Toast.LENGTH_SHORT).show();
+       // Toast.makeText(getContext(),"Mensaje: " +response, Toast.LENGTH_SHORT).show();
         progreso.hide();
+
+        String url2="http://cms.tecnidepot.com/img-users/";
+        url2=url2.replace(" ","%20");
 
         Usuario miUsuario = new Usuario();
 
@@ -164,7 +176,12 @@ public class ConsultaFragment extends Fragment implements Response.Listener<JSON
 
         txtNombre.setText("Nombre : "+miUsuario.getNombre());
         txtDireccion.setText("Direccion : "+miUsuario.getDireccion());
-        txtImagen.setText("Imagen : "+miUsuario.getImagen());
+        txtImagen.setText("Imagen : ");
+        //txtImagen.setText("Imagen : "+miUsuario.getImagen());
+        url2= url2+miUsuario.getImagen();
+        Glide.with(this).load(url2).centerCrop().diskCacheStrategy(DiskCacheStrategy.ALL).thumbnail(0.5f).into(imgUsuario);
+
+
        /* txtFechaCreate.setText("Fecha de creacion: "+miUsuario.getFechaCreate());
         txtFechaUpdate.setText("Ultima Actualizacion: "+miUsuario.getFechaUpdate());*/
     }
